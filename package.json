@@ -19,6 +19,9 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.2",
+    "commander": "^12.0.0",
+    "conf": "^12.0.0",
+    "shelljs": "^0.8.5",
     "yargs": "^17.7.2"
   }
 }

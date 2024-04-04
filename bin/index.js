@@ -1,37 +1,71 @@
-// index.js
+#!/usr/bin/env node
 
-const yargs = require("yargs");
+const fs = require("fs");
+const { execSync } = require("child_process");
+const { program } = require("commander");
 const chalk = require("chalk");
+const readline = require("readline");
 
-// Define your commands using yargs
-yargs
-  .command(
-    "new [name]",
-    "Create a new project",
-    (yargs) => {
-      return yargs.positional("name", {
-        describe: "Project name",
-        type: "string",
-      });
-    },
-    (argv) => {
-      if (!argv.name) {
-        // If project name is not provided, prompt the user interactively
-        const readline = require("readline").createInterface({
-          input: process.stdin,
-          output: process.stdout,
-        });
-
-        readline.question("Enter project name: ", (name) => {
-          console.log(chalk.green("Creating a new project with name:", name));
-          readline.close();
-        });
-      } else {
-        console.log("Creating a new project with name:", argv.name);
-      }
-    }
+program
+  .command("new [projectName]")
+  .description(
+    "Generates a new project with the given name, requests name if not provided"
   )
-  .command("generate <type>", "Generate something", (argv) => {
-    console.log("Generating something of type:", argv.type);
-  })
-  .help().argv; // Enable the --help option for all commands // Parse the arguments
+  .action((projectName) => initProject(projectName));
+
+program.parse(process.argv);
+
+function createProjectFolder(projectName) {
+  fs.mkdirSync(projectName);
+  process.chdir(projectName);
+  execSync("npm init -y");
+
+  console.log(`Project "${projectName}" created successfully!`);
+}
+
+function initProject(projectName) {
+  welcome();
+  if (!projectName) {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question("Enter project name: ", (name) => {
+      rl.close();
+      if (!name.trim()) {
+        console.error("Project name cannot be empty.");
+      } else {
+        createProjectFolder(name.trim());
+      }
+    });
+  } else {
+    createProjectFolder(projectName);
+  }
+}
+
+function welcome() {
+  console.log(
+    chalk.blue(
+      `☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰`
+    )
+  );
+  console.log(
+    chalk.redBright(`
+  =********+=.    =**.             ***   -+*          =**********        
+  :=++++++#%%+   +%%.             %%# -#%#+           :=+++++++=        
+           =%%=  +%%.             %%# #%#                               
+           -%%=  +%%.             %%# *%%=......     ...........        
+:=========*%%*   +%%.             %%#  =#%%%%%%%%#= +%%%%%%%%%%#        
++%%#######*+:    +%%:       :**:  %#=    .::::::=#%#::::::::::::        
++%%.             .#%#.     :#%#.  =              +%%:                   
++%%.              .*%%#+++#%%*.     -++++++++: -*%%+  :=+++++++=        
+=**.                .=+***+=.     :+*********- +*=. .+********** 
+`)
+  );
+  console.log(
+    chalk.blue(
+      `☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰`
+    )
+  );
+}
