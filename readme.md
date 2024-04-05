@@ -23,7 +23,7 @@ CLI to manage Pulse framework projects
 
 * While in the project root directory, install globally with
 
-  Run ```npm install -g```
+  Run ```npm install -g .```
 
 * Generate a new project with 
   
