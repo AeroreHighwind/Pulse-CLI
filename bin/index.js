@@ -19,8 +19,13 @@ function createProjectFolder(projectName) {
   fs.mkdirSync(projectName);
   process.chdir(projectName);
   execSync("npm init -y");
+  //install deps
+  installDependendies();
+  createIndexFile();
 
-  console.log(`Project "${projectName}" created successfully!`);
+  console.log(
+    chalk.greenBright(`Project "${projectName}" created successfully!`)
+  );
 }
 
 function initProject(projectName) {
@@ -41,6 +46,43 @@ function initProject(projectName) {
     });
   } else {
     createProjectFolder(projectName);
+  }
+}
+
+function installDependendies() {
+  try {
+    console.log(chalk.greenBright("Installing dependencies..."));
+    execSync("npm install express");
+    execSync("npm install @types/express --save-dev");
+    execSync("npm install typescript --save-dev");
+    execSync("npm install --save-dev @babel/core");
+    execSync("npm install @babel/preset-env --save-dev");
+    console.log(chalk.green("Dependencies installed successfully!"));
+  } catch (error) {
+    console.log(chalk.red("An error ocurred!"));
+  }
+}
+
+function createIndexFile() {
+  const indexContent = `import express from 'express';
+  
+  const app = express();
+  const port = 3000;
+  
+  app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
+  
+  app.listen(port, () => {
+    console.log(\`Server is running on http://localhost:\${port}\`);
+  });
+  `;
+
+  try {
+    fs.writeFileSync("index.ts", indexContent);
+    console.log(chalk.green("index.ts created successfully!"));
+  } catch (error) {
+    console.log(chalk.red("An error occurred while creating index.ts!"));
   }
 }
 
